@@ -1,9 +1,7 @@
 import "./index.css"
 
-export default function Header() {
+export default function Body() {
     return(
-        <header>
-            <body></body>
-        </header>
+        <h1 className="text-black font-bold">hi</h1>
     )
 }
