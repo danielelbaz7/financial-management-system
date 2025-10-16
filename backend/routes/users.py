@@ -31,11 +31,18 @@ def login_user():
     password = data.get('password')
 
     try:
-        res = supabase.auth.sign_in_with_password({
-            "user": res.user.model_dump() if res.user else None,
-            "session": res.session.model_dump() if res.session else None
+        result = supabase.auth.sign_in_with_password({
+            "email": email,
+            "password": password
         })
-        return jsonify({"session": res.session, "user": res.user}), 200
+        user_data = result.user.model_dump() if result.user else None
+        session_data = result.session.model_dump() if result.session else None
+
+        return jsonify({
+            "message": "Login successful",
+            "user": user_data,
+            "session": session_data
+        }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
