@@ -16,17 +16,33 @@ export default function Body() {
             </div>
 
             <div className="grid grid-cols-3 gap-4 pt-8">
-                <div className="border-3 border-black rounded-xl bg-white pt-3">
+                <div className="border-3 border-black rounded-xl bg-white pt-4 pb-4">
                     <div className="text-black font-semibold text-xl">
                         Custom Expense Categories
                     </div>
-                    <div className="text-black text-xl pt-4">
+                    <div className="text-black text-xl pt-4 px-4">
                         Categorize your spending in any way you want! You can use our premade categories
-                        like tuition and rent or o
+                        like tuition and rent, or create your own!
                     </div>
                 </div>
-                <div className="border-3 border-black rounded-xl bg-white p-32">1</div>
-                <div className="border-3 border-black rounded-xl bg-white p-32">1</div>
+
+                <div className="border-3 border-black rounded-xl bg-white pt-4 pb-4">
+                    <div className="text-black font-semibold text-xl">
+                        AI Suggestions
+                    </div>
+                    <div className="text-black text-xl pt-4 px-4">
+                        Utilize our custom AI-powered budgeting suggestions to obtain personalized insight on all areas of your finances.
+                    </div>
+                </div>
+
+                <div className="border-3 border-black rounded-xl bg-white pt-4 pb-4">
+                    <div className="text-black font-semibold text-xl">
+                        Personalized Budgeting
+                    </div>
+                    <div className="text-black text-xl pt-4 px-4">
+                        Dollar.js allows you to set a custom budget, both categorically and universally, allowing you to master your money.
+                    </div>
+                </div>
             </div>
 
             <div id="about" className="scroll-mt-24 text-black pt-24 text-6xl text-center font-bold">
