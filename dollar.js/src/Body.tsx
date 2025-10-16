@@ -1,19 +1,7 @@
-import "./index.css"
-
-export default function Header() {
+export default function Body() {
     return(
         <div>
-            <header className="fixed top-0 left-0 w-full bg-black flex items-center justify-between px-12 py-8 z-50 text-3xl">
-                <h1 className="text-white font-bold">Dollar.js</h1>
-                <ul className="flex space-x-8 text-white font-medium justify-center translate-x-1/14">
-                    <li><a href="#home" className="hover:text-blue-300 transition">Home</a></li>
-                    <li><a href="#tools" className="hover:text-blue-300 transition">Tools</a></li>
-                    <li><a href="#about" className="hover:text-blue-300 transition">About</a></li>
-                </ul>
-                <button href="#get-started" className="hover:text-blue-300 transition">Get Started</button>
-            </header>
-
-            <div className="text-black pt-40 text-6xl text-left font-bold max-w-lg">
+            <div id="home" className="scroll-mt-24 text-black pt-40 text-6xl text-left font-bold max-w-lg">
                 For Students, By Students
             </div>
             <div className="text-black pt-6 text-2xl text-left font-semibold max-w-md">
@@ -23,11 +11,25 @@ export default function Header() {
                 </div>
             </div>
 
-            <div className="text-black pt-24 text-6xl text-center font-bold">
-                Tools
+            <div id="features" className="scroll-mt-24 text-black pt-18 text-6xl text-center font-bold">
+                Features
             </div>
 
-            <div className="text-black pt-24 text-6xl text-center font-bold">
+            <div className="grid grid-cols-3 gap-4 pt-8">
+                <div className="border-3 border-black rounded-xl bg-white pt-3">
+                    <div className="text-black font-semibold text-xl">
+                        Custom Expense Categories
+                    </div>
+                    <div className="text-black text-xl pt-4">
+                        Categorize your spending in any way you want! You can use our premade categories
+                        like tuition and rent or o
+                    </div>
+                </div>
+                <div className="border-3 border-black rounded-xl bg-white p-32">1</div>
+                <div className="border-3 border-black rounded-xl bg-white p-32">1</div>
+            </div>
+
+            <div id="about" className="scroll-mt-24 text-black pt-24 text-6xl text-center font-bold">
                 About Us
             </div>
 
@@ -36,7 +38,6 @@ export default function Header() {
                 When we were unable to find what we were looking for, we decided to create our own. A finance tracker that features
                 fast and easy expense and income tracking, financial visualizations, personalized budgeting suggestions, and much more, all for students.
             </div>
-
         </div>
-    )
+        )
 }
