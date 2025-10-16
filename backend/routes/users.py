@@ -31,11 +31,18 @@ def login_user():
     password = data.get('password')
 
     try:
-        res = supabase.auth.sign_in_with_password({
-            "user": res.user.model_dump() if res.user else None,
-            "session": res.session.model_dump() if res.session else None
+        result = supabase.auth.sign_in_with_password({
+            "email": email,
+            "password": password
         })
-        return jsonify({"session": res.session, "user": res.user}), 200
+        user_data = result.user.model_dump() if result.user else None
+        session_data = result.session.model_dump() if result.session else None
+
+        return jsonify({
+            "message": "Login successful",
+            "user": user_data,
+            "session": session_data
+        }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
@@ -43,10 +50,33 @@ def login_user():
 def get_profile():
     token = request.headers.get("Authorization")
     if not token:
-        return jsonify({"error": "Missign auth token"}), 401
+        return jsonify({"error": "Missing auth token"}), 401
     
     try:
         user = supabase.auth.get_user(token)
         return jsonify({"user": user}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+@users_bp.route('/users', methods=['POST'])
+def add_user():
+    data = request.get_json()
+
+    name = data.get("name")
+    email = data.get("email")
+    balance = data.get("balance", 0)
+
+    if not name or not email:
+        return jsonify({"error": "Missing required fields"}), 400
+
+    try:
+        response = supabase.table("users").insert({
+            "name": name,
+            "email": email,
+            "balance": balance
+        }).execute()
+
+        return jsonify(response.data), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
