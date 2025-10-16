@@ -1,0 +1,74 @@
+body {
+    background-color: white;
+}
+
+#budget {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+}
+
+.card1 {
+    flex: 1;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: solid black;
+}
+
+.category-label {
+    font-size: 0.9rem;
+    color: #777777;
+    font-weight: 400; 
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.amount {
+    font-size: 2rem; 
+    color: #333333; 
+    font-weight: 700; 
+    margin-top: 0;
+}
+
+.budget-card {
+    background-color: #e0f7fa;
+}
+
+.spent-card {
+    background-color: #e8f5e9;
+    color: #1b5e20;
+}
+
+.remaining-card {
+    background-color: #ffebee;
+    color: #b71c1c;
+}
+
+.spent-card .amount { color: #1b5e20; }
+
+.remaining-card .amount { color: #b71c1c; }
+
+#categories {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.category-card {
+    flex: 1;
+    min-width: 200px;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: solid black;
+}

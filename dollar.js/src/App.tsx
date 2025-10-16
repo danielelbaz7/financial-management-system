@@ -1,10 +1,10 @@
 import './App.css'
-import Header from "./Header.tsx";
+import HomeScreen from "./HomeScreen.tsx";
 
 function App() {
 
   return (
-    <Header />
+    <HomeScreen />
   )
 }
 
