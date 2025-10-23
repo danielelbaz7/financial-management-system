@@ -12,7 +12,7 @@ export default function LoginPage() {
             </button>
 
             <div className="text-black font-bold text-3xl pt-4 pb-8"> {loginOrSignUp ? "Login" : "Sign Up"} </div>
-            <div className="border-3 border-black rounded-xl bg-white pt-6 pb-6 max-w-1/3 mx-auto">
+            <div className="border-3 border-black rounded-xl bg-white pt-6 pb-6  max-w-1/3 mx-auto">
 
                 {!loginOrSignUp && (
                     <>
@@ -50,7 +50,12 @@ export default function LoginPage() {
                 }
                 <div className="pb-4"></div>
 
-                <button className="text-black border-black border-2 rounded-xl p-2 hover:cursor-pointer font-medium ">{loginOrSignUp ? "Log In" : "Sign Up"}</button>
+                <button className="text-black border-black border-2 rounded-xl p-2 hover:cursor-pointer font-medium pb">{loginOrSignUp ? "Log In" : "Sign Up"}</button>
+                {loginOrSignUp ? (
+                    <div className="text-black pt-2">Don't have an account yet? <span onClick={() => setLoginOrSignup(!loginOrSignUp)} className="text-blue-800 hover:cursor-pointer"> Sign Up </span> </div>
+                ) :
+                    <div className="text-black pt-2">Already have an account? <span onClick={() => setLoginOrSignup(!loginOrSignUp)} className="text-blue-800 hover:cursor-pointer"> Log In </span> </div>
+                }
 
             </div>
         </div>
