@@ -13,8 +13,12 @@ export default function HomeScreen() {
         localStorage.setItem("showLoginLocalStorage", JSON.stringify(showLogin));
     }, [showLogin]);
 
+    const closeLogin = () => {
+        setShowLogin(false)
+    }
+
     if(showLogin) {
-        return <LoginManager />
+        return <LoginManager onButtonPress={closeLogin} />
     }
 
     return (

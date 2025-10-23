@@ -7,7 +7,12 @@ import LoginPage from "./LoginPage.tsx";
 // manages login, so when you click to login this determines
 // if you should go to the login page or if you are already signed in
 // and should go to the dashboard
-export default function LoginManager() {
+
+type Props = {
+    onButtonPress: () => void
+}
+
+export default function LoginManager({onButtonPress}: Props) {
     const [session, setSession] = useState<Session | null>(null)
 
     useEffect(() => {
@@ -17,6 +22,6 @@ export default function LoginManager() {
     }, [])
 
     return (
-        session ? <Dashboard /> : <LoginPage />
+        session ? <Dashboard /> : <LoginPage onButtonPress={onButtonPress} />
     )
 }
