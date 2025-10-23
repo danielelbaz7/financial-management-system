@@ -17,7 +17,7 @@ def add_transaction():
 @transactions_bp.route('/transactions/summary', methods=['GET'])
 def sum_transactions():
     try:
-        response = supabase.table("transaction").select("*").execute()
+        response = supabase.table("transactions").select("*, category: category_id(name)").execute()
         transactions = response.data
 
         if not transactions:
@@ -25,7 +25,7 @@ def sum_transactions():
         
         summary = {}
         for t in transactions:
-            category = t.get("category", "Uncategorized")
+            category = t.get("category", {}).get("name", "Uncategorized")
             amount = float(t.get("amount", 0))
             summary[category] = summary.get(category, 0) + amount
         
