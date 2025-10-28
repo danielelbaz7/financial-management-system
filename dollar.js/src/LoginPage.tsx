@@ -33,6 +33,7 @@ export default function LoginPage({onButtonPress}: Props) {
                 })
 
                 if (error) throw error
+                else localStorage.setItem("showLoginLocalStorage", JSON.stringify(false))
 
                 setError(
                     "Check your email for the confirmation link! If your email is already registered, you will not receive an email!",
@@ -44,6 +45,8 @@ export default function LoginPage({onButtonPress}: Props) {
                 })
 
                 if (error) throw error
+                else localStorage.setItem("showLoginLocalStorage", JSON.stringify(false))
+
 
             }
 

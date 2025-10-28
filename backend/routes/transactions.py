@@ -10,9 +10,30 @@ def get_transactions():
 
 @transactions_bp.route('/transactions', methods=['POST'])
 def add_transaction():
+    # changes json to contain the correct values for transaction insertion
     data = request.get_json()
-    response = supabase.table("transactions").insert(data).execute()
-    return jsonify(response.data), 201
+    token = request.headers.get("Authorization")
+    token=token.split(" ")[1]
+    user_id = supabase.auth.get_user(token)
+    data["user_id"] = user_id
+    print(user_id)
+    categories = supabase.table('categories').select('*').execute()
+
+    # category_exists = False
+    #
+    # for c in categories:
+    #     if c["name"] == data["category_id"]:
+    #         data["category_id"] = c["name"]
+    #         category_exists = True
+    #         break
+    #
+    # if not category_exists:
+    #     new_category = {"name": data["category_id"], "user": user_id}
+    #     categories.supabase.table('categories').insert(jsonify{})
+    #
+
+    #response = supabase.table("transactions").insert(data).execute()
+    return jsonify(1), 201
 
 @transactions_bp.route('/transactions/summary', methods=['GET'])
 def sum_transactions():

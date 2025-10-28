@@ -2,8 +2,8 @@ import "./index.css"
 import "./dashboard.css"
 
 import DashboardHeader from "./Dashboard-header.tsx"
-
 export default function Dashboard() {
+
     return(
         <div>
             <DashboardHeader />
