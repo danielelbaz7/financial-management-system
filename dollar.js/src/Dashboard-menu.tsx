@@ -1,7 +1,9 @@
 import "./index.css"
 import "./dashboard-menu.css"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as React from "react";
+import type {Session} from "@supabase/supabase-js";
+import {supabase} from "./SupabaseClient.tsx";
 
 interface BackdropProps {
     onClose: () => void;
@@ -11,14 +13,42 @@ export default function TransactionMenu({ onClose }: BackdropProps) {
     const [incomeOrExpense, setIncomeOrExpense] = React.useState("income");
     const [amount, setAmount] = useState<number | null>(null);
     const [error, setError] = useState("");
+    const [description, setDescription] = useState("");
+
+    const [session, setSession] = useState<Session | null>(null)
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setSession(s))
+        return () => subscription.unsubscribe()
+    }, [])
 
     const handleAddTransaction = async (e: React.FormEvent)=> {
-        e.preventDefault()
+        e.preventDefault();
 
-        if(amount === null) {
-            setError("Please enter amount")
-            return
+        if (amount === null) {
+            setError("Please enter amount.");
+            return;
         }
+
+        if(session?.access_token === null){
+            setError("No access token.");
+            return;
+        }
+
+        const response = await fetch("http://localhost:5000/transactions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+
+            },
+            body: JSON.stringify({
+                amount: amount,
+                description: description,
+                date: new Date().toISOString().split("T")[0],
+                type: incomeOrExpense,
+            }),
+        });
     }
 
     return (
@@ -51,7 +81,7 @@ export default function TransactionMenu({ onClose }: BackdropProps) {
                 </div>
                 <div className="form-group">
                     <label>Description</label>
-                    <input type="text" placeholder="What was this for?" className="input-field"/>
+                    <input type="text" placeholder="What was this for?" value={description} onChange={(e) => setDescription(e.target.value)} className="input-field"/>
                 </div>
 
                 {error && (
