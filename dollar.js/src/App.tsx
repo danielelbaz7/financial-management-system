@@ -10,9 +10,32 @@ function App() {
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setSession(s))
-        return () => subscription.unsubscribe()
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            async (_event, newSession) => {
+                setSession(newSession);
+                if (newSession) {
+                    await handleAddUser(newSession);
+                    localStorage.setItem("showLoginLocalStorage", JSON.stringify(false))
+                }
+            }
+        );
+
+        return () => subscription.unsubscribe();
     }, [])
+
+    const handleAddUser = async (session: Session) => {
+        try {
+            await fetch("http://localhost:5000/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${session.access_token}`,
+                },
+            });
+        } catch (error) {
+            console.error("Register call failed:", error);
+        }
+    };
 
 
   return (

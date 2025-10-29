@@ -11,29 +11,36 @@ def get_transactions():
 @transactions_bp.route('/transactions', methods=['POST'])
 def add_transaction():
     # changes json to contain the correct values for transaction insertion
-    data = request.get_json()
-    token = request.headers.get("Authorization")
-    token=token.split(" ")[1]
-    user_id = supabase.auth.get_user(token)
-    data["user_id"] = user_id
-    print(user_id)
-    categories = supabase.table('categories').select('*').execute()
+    try:
+        data = request.get_json()
+        token = request.headers.get("Authorization")
+        token=token.split(" ")[1]
+        user_id = supabase.auth.get_user(token).user.id
+        data["user_id"] = user_id
+        categories = supabase.table('categories').select('*').execute().data
 
-    # category_exists = False
-    #
-    # for c in categories:
-    #     if c["name"] == data["category_id"]:
-    #         data["category_id"] = c["name"]
-    #         category_exists = True
-    #         break
-    #
-    # if not category_exists:
-    #     new_category = {"name": data["category_id"], "user": user_id}
-    #     categories.supabase.table('categories').insert(jsonify{})
-    #
+        category_exists = False
 
-    #response = supabase.table("transactions").insert(data).execute()
-    return jsonify(1), 201
+        print(categories)
+
+        for c in categories:
+            if c["name"].lower() == data["category_id"].lower():
+                data["category_id"] = c["id"]
+                category_exists = True
+                break
+
+        if not category_exists:
+            new_category = {"name": data["category_id"], "user": user_id}
+            supabase.table('categories').insert(jsonify(new_category))
+
+
+        response = supabase.table("transactions").insert(data).execute()
+    except Exception as e:
+        print("ERROR:", e)
+        traceback.print_exc()  # 👈 shows full stack trace in your Flask console
+        return jsonify({"status": "bad", "message": str(e)}), 400
+
+    return jsonify(response.data), 201
 
 @transactions_bp.route('/transactions/summary', methods=['GET'])
 def sum_transactions():

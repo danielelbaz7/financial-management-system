@@ -5,22 +5,34 @@ users_bp = Blueprint('users', __name__)
 
 @users_bp.route('/register', methods=['POST'])
 def register_user():
-    data = request.get_json()
-    email = data.get('email', '').strip().lower()
-    password = data.get('password')
+    # data = request.get_json()
+    # email = data.get('email', '').strip().lower()
+    # name = data.get('name', '')
 
-    if not email:
+    token = request.headers.get("Authorization")
+    token=token.split(" ")[1]
+    user = supabase.auth.get_user(token).user
+
+    current_table = supabase.table("users").select("id").eq("id", user.id).execute()
+    if current_table.data:
+        return jsonify({"message": "User already exists"}), 200
+
+    data = {
+        "id": user.id,
+        "name": user.user_metadata.get("display_name") or user.user_metadata.get("name"),
+        "email": user.email
+    }
+
+    if not data["email"]:
         return jsonify({"error": "Missing email"}), 400
-    if not password:
-        return jsonify({"error": "Missing password"}), 400
+    if not data["name"]:
+        return jsonify({"error": "Missing name"}), 400
 
     try:
-        result = supabase.auth.sign_up({"email": email, "password": password})
+        response = supabase.table("users").insert(data).execute()
+        if response.data:
+            return jsonify(response.data), 201
 
-        user_data = result.user.model_dump() if result.user else None
-        session_data = result.session.model_dump() if result.session else None
-
-        return jsonify({"user": user_data, "session": session_data}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 

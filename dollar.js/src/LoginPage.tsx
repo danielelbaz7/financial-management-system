@@ -28,24 +28,36 @@ export default function LoginPage({onButtonPress}: Props) {
                     email,
                     password,
                     options: {
-                        data: { name: name }
+                        data: { display_name: name }
                     }
                 })
 
+
+
                 if (error) throw error
-                else localStorage.setItem("showLoginLocalStorage", JSON.stringify(false))
 
                 setError(
                     "Check your email for the confirmation link! If your email is already registered, you will not receive an email!",
                 )
             } else {
-                const { error } = await supabase.auth.signInWithPassword({
+                const { data, error } = await supabase.auth.signInWithPassword({
                     email,
                     password,
                 })
 
                 if (error) throw error
-                else localStorage.setItem("showLoginLocalStorage", JSON.stringify(false))
+
+                const session = data.session;
+                if (session) {
+                    localStorage.setItem("showLoginLocalStorage", JSON.stringify(false))
+                    await fetch("http://localhost:5000/register", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${session?.access_token}`,
+                        }
+                    })
+                }
 
 
             }
