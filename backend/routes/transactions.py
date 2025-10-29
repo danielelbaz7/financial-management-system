@@ -21,7 +21,7 @@ def add_transaction():
 
         category_exists = False
 
-        print(categories)
+        (categories)
 
         for c in categories:
             if c["name"].lower() == data["category_id"].lower():

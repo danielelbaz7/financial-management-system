@@ -58,6 +58,7 @@ export default function TransactionMenu({ onClose }: BackdropProps) {
 
         if(response.ok) {
             alert("Transaction added successfully.");
+            onClose();
             return
         } else {
             alert("Error when adding transaction.");
