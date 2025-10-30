@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {supabase} from "./SupabaseClient.tsx";
+import * as React from "react";
 
 type Props = {
     onButtonPress: () => void
@@ -26,7 +27,12 @@ export default function LoginPage({onButtonPress}: Props) {
                 const { error } = await supabase.auth.signUp({
                     email,
                     password,
+                    options: {
+                        data: { display_name: name }
+                    }
                 })
+
+
 
                 if (error) throw error
 
@@ -34,12 +40,25 @@ export default function LoginPage({onButtonPress}: Props) {
                     "Check your email for the confirmation link! If your email is already registered, you will not receive an email!",
                 )
             } else {
-                const { error } = await supabase.auth.signInWithPassword({
+                const { data, error } = await supabase.auth.signInWithPassword({
                     email,
                     password,
                 })
 
                 if (error) throw error
+
+                const session = data.session;
+                if (session) {
+                    localStorage.setItem("showLoginLocalStorage", JSON.stringify(false))
+                    await fetch("http://localhost:5000/register", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${session?.access_token}`,
+                        }
+                    })
+                }
+
 
             }
 
@@ -98,6 +117,21 @@ export default function LoginPage({onButtonPress}: Props) {
                         /></>
                     )
                 }
+                <div className="pb-4"></div>
+
+                {error && (
+                    <div
+                        className={`text-center rounded-lg mx-6 ${
+                            error.includes("Check your email")
+                                ? "bg-green-500/10 border border-green-500/20 text-green-400"
+                                : "bg-red-500/10 border border-red-500/20 text-red-400"
+                        }`}
+                        style={{ fontSize: "14px", padding: "12px" }}
+                    >
+                        {error}
+                    </div>
+                )}
+
                 <div className="pb-4"></div>
 
                 <button onClick={handleSignIn} className="text-black border-black border-2 rounded-xl p-2 hover:cursor-pointer font-medium pb">{loginOrSignUp ? "Log In" : "Sign Up"}</button>

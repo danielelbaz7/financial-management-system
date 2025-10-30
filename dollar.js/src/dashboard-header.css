@@ -1,0 +1,19 @@
+.dashboard-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    padding: 15px 20px;
+    z-index: 1000;
+}
+
+.logo-transaction {
+    display: flex;  
+    justify-content: space-between;
+}
+
+.transaction-button {
+    cursor: pointer;
+}

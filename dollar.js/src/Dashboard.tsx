@@ -1,9 +1,12 @@
 import "./index.css"
 import "./dashboard.css"
 
+import DashboardHeader from "./Dashboard-header.tsx"
 export default function Dashboard() {
+
     return(
         <div>
+            <DashboardHeader />
             <div id="budget">
                 <div className="card1 budget-card">
                     <p className="category-label">Total Budget</p>
@@ -22,6 +25,9 @@ export default function Dashboard() {
                 <div className="category-card">Rent</div>
                 <div className="category-card">Food</div>
                 <div className="category-card">Entertainment</div>
+            </div>
+            <div className="spending">
+                <h2>Spending Overview</h2>
             </div>
         </div>
     )
