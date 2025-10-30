@@ -21,6 +21,7 @@ export default function Dashboard() {
                     <p className="amount">$0.00</p>
                 </div>
             </div>
+            <div className="header">Top Spending Categories</div>
             <div id="categories">
                 <div className="category-card">
                     <div className="category-label">Rent</div>

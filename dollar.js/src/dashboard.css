@@ -75,3 +75,10 @@ body {
     border: solid black;
     text-align: left;
 }
+
+.header {
+    color: black;
+    text-align: left;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}

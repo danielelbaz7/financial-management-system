@@ -1,0 +1,28 @@
+.c-menu {
+    background-color: white;
+    border-color: black;
+    border-radius: 2%;
+    position: fixed;
+    top: 25vh;
+    left: 33.33%;
+    width: 33.33%;
+    min-width: 300px;
+    z-index: 2000;
+    padding: 10px 15px;
+    color: black;
+    text-align: left;
+}
+
+.category-menu-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid black;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
