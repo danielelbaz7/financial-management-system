@@ -17,7 +17,7 @@ export default function TransactionMenu({ onClose }: BackdropProps) {
     const [description, setDescription] = useState("");
 
     const [category, setCategory] = useState("Choose a Category");
-    const options = [{label: "Rent", value: "rent"}, {label: "Food", value: "food"}, {label: "Transportation", value: "transportation"}];
+    const options = [{label: "Rent", value: "rent"}, {label: "Food", value: "food"}, {label: "Transportation", value: "transportation"}, {label: "Occupation", value: "occupation"}];
 
     const [session, setSession] = useState<Session | null>(null)
 
