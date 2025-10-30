@@ -36,6 +36,13 @@ export default function Dashboard() {
                     <div>$0.00</div>
                 </div>
             </div>
+            <div className="header">Top Income Categories</div>
+            <div id="categories">
+                <div className="category-card">
+                    <div className="category-label">Occupation</div>
+                    <div>$0.00</div>
+                </div>
+            </div>
             <div className="spending">
                 <h2>Spending Overview</h2>
             </div>
