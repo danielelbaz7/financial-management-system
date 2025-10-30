@@ -143,7 +143,7 @@ export default function TransactionMenu({ onClose }: BackdropProps) {
                         {error}
                     </div>
                 )}
-                
+
                 <button className="add-transaction-button" onClick={handleAddTransaction}>
                     Add Transaction
                 </button>
