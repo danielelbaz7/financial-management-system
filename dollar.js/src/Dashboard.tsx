@@ -6,6 +6,11 @@ import {useEffect, useState} from "react";
 import * as React from "react";
 import type {Session} from "@supabase/supabase-js";
 import {supabase} from "./SupabaseClient.tsx";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
+ChartJS.register(ArcElement, Tooltip, Legend, Title);
+
+
 export default function Dashboard() {
     const [income, setIncome] = useState<number>(0);
     const [expenses, setExpenses] = useState<number>(0);
@@ -30,6 +35,8 @@ export default function Dashboard() {
 
         const data = await response.json()
 
+
+
         for(const res of data) {
             if(res["type"] == 'income') {
                 setIncome(income + res["amount"])
@@ -39,6 +46,66 @@ export default function Dashboard() {
         }
 
     }
+
+    const dataExpenses = {
+        labels: ["Food", "Rent", "Shopping"],
+        datasets: [
+            {
+                data: [200, 800, 150],
+                backgroundColor: [
+                    "#FF6384",
+                    "#36A2EB",
+                    "#FFCE56",
+                ],
+            },
+        ],
+    };
+
+    const dataIncome = {
+        labels: ["Occupation", "Side Hustle"],
+        datasets: [
+            {
+                data: [200, 50],
+                backgroundColor: [
+                    "#98FF98",
+                    "#ff98f5"
+                ],
+            },
+        ],
+    };
+
+
+    const optionsExpenses = {
+        plugins: {
+            title: {
+                display: true,
+                text: "Your Expense Breakdown",   // ← chart title
+                font: {
+                    size: 18
+                }
+            },
+            legend: {
+                display: true,
+                position: "bottom"
+            }
+        }
+    };
+
+    const optionsIncome = {
+        plugins: {
+            title: {
+                display: true,
+                text: "Your Income Breakdown",   // ← chart title
+                font: {
+                    size: 18
+                }
+            },
+            legend: {
+                display: true,
+                position: "bottom"
+            }
+        }
+    };
 
 
     return(
@@ -83,8 +150,13 @@ export default function Dashboard() {
                     <div>$0.00</div>
                 </div>
             </div>
-            <div className="spending">
-                <h2>Spending Overview</h2>
+            <div className="flex justify-center gap-48">
+                <div className="mt-8">
+                    <Pie data={dataIncome} options={optionsIncome}/>
+                </div>
+                <div className="mt-8">
+                    <Pie data={dataExpenses} options={optionsExpenses}/>
+                </div>
             </div>
         </div>
     )
