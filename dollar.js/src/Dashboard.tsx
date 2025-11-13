@@ -35,15 +35,20 @@ export default function Dashboard() {
 
         const data = await response.json()
 
+        let tempIncome = 0
+        let tempExpense = 0
 
 
         for(const res of data) {
             if(res["type"] == 'income') {
-                setIncome(income + res["amount"])
+                tempIncome += res["amount"]
             } else if (res["type"] == 'expense') {
-                setExpenses(expenses + res["amount"])
+                tempExpense += res["amount"]
             }
         }
+
+        setIncome(tempIncome)
+        setExpenses(tempExpense)
 
     }
 
@@ -125,8 +130,8 @@ export default function Dashboard() {
                     <p className="amount">${income-expenses}</p>
                 </div>
             </div>
-            <button className="bg-black" onClick={obtainTransactions}>
-                HELLO
+            <button className="text-black font-bold border-gray-400 p-3 border-2 rounded-2xl" onClick={obtainTransactions}>
+                Update Transactions
             </button>
             <div className="header">Top Spending Categories</div>
             <div id="categories">
