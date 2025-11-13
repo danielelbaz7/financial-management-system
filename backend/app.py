@@ -3,6 +3,7 @@ from routes.transactions import transactions_bp
 from routes.users import users_bp
 from routes.categories import categories_bp
 from flask_cors import CORS
+from routes.ai import ai_bp
 
 app = Flask(__name__)
 
@@ -10,6 +11,8 @@ app = Flask(__name__)
 app.register_blueprint(transactions_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(categories_bp)
+app.register_blueprint(ai_bp)
+
 
 CORS(app, origins=["http://localhost:5173"])
 
