@@ -28,16 +28,13 @@ export default function Dashboard() {
             }
         })
 
-        let income = 0
-        let costs = 0
-
         const data = await response.json()
 
         for(const res of data) {
             if(res["type"] == 'income') {
-                income += res["amount"]
+                setIncome(income + res["amount"])
             } else if (res["type"] == 'expense') {
-                costs += res["amount"]
+                setExpenses(expenses + res["amount"])
             }
         }
 
@@ -50,15 +47,15 @@ export default function Dashboard() {
             <div id="budget" className="mt-4">
                 <div className="card1 budget-card">
                     <p className="category-label">Total Budget</p>
-                    <p className="amount">$0.00</p>
+                    <p className="amount">${income}</p>
                 </div>
                 <div className="card1 spent-card">
                     <p className="category-label">Total Spent</p>
-                    <p className="amount">$0.00</p>
+                    <p className="amount">${expenses}</p>
                 </div>
                 <div className="card1 remaining-card">
                     <p className="category-label">Total Remaining</p>
-                    <p className="amount">$0.00</p>
+                    <p className="amount">${income-expenses}</p>
                 </div>
             </div>
             <button className="bg-black" onClick={obtainTransactions}>
