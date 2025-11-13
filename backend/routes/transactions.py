@@ -22,8 +22,6 @@ def add_transaction():
 
         category_exists = False
 
-        (categories)
-
         for c in categories:
             if c["name"].lower() == data["category_id"].lower():
                 data["category_id"] = c["id"]
@@ -31,7 +29,7 @@ def add_transaction():
                 break
 
         if not category_exists:
-            new_category = {"name": data["category_id"], "user": user_id}
+            new_category = {"name": data["category_id"], "user_id": user_id}
             cat_response = supabase.table('categories').insert(new_category).execute()
             data["category_id"] = cat_response.data[0]["id"]
 
@@ -54,15 +52,15 @@ def edit_transaction(transaction_id):
             return jsonify({"error": "Missing or invalid token"}), 401
         
         token = token.split(" ")[1]
-        user = supabase.auth.get_user[token]
+        user = supabase.auth.get_user(token)
         user_id = user.user.id
 
         existing = supabase.table("transactions").select("*").eq("id", transaction_id).eq("user_id", user_id).execute()
-        if not existing:
+        if not existing.data:
             return jsonify({"error": "Transaction not found or unauthorized"}), 404
         
         response = supabase.table("transactions").update(data).eq("id", transaction_id).eq("user_id", user_id).execute()
-        return jsonify(response), 200
+        return jsonify(response.data), 200
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": str(e)}), 400
@@ -70,17 +68,17 @@ def edit_transaction(transaction_id):
 @transactions_bp.route('/transactions/<int:transaction_id>', methods=['DELETE'])
 def remove_transaction(transaction_id):
     try:
-        token = request.headers.get("Authorizatioin")
+        token = request.headers.get("Authorization")
 
         if not token or not token.startswith("Bearer "):
             return jsonify({"error": "Missing or invalid token"}), 401
         
         token = token.split(" ")[1]
-        user = supabase.auth.get_user[token]
+        user = supabase.auth.get_user(token)
         user_id = user.user.id
 
         existing = supabase.table("transactions").select("*").eq("id", transaction_id).eq("user_id", user_id).execute()
-        if not existing:
+        if not existing.data:
             return jsonify({"error": "Transaction not found or unauthorized"}), 404
         
         supabase.table("transactions").delete().eq("id", transaction_id).eq("user_id", user_id).execute()
