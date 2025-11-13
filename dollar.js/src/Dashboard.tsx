@@ -72,8 +72,8 @@ export default function Dashboard() {
             {
                 data: [200, 50],
                 backgroundColor: [
-                    "#98FF98",
-                    "#ff98f5"
+                    "#79f279",
+                    "#f0ac59"
                 ],
             },
         ],

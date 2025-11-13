@@ -102,32 +102,14 @@ export default function TransactionMenu({ onClose }: BackdropProps ) {
                     <input type="number" placeholder="0.00" value={amount === null ? "" : amount} onChange={(e) => setAmount(e.target.value === "" ? null : Number(e.target.value))} className="input-field"/>
                 </div>
                 <div className="form-group">
-
-
                     <label>Category</label>
-
-
                     <select value={category} onChange={handleChange} style={{border: "1px solid black"}}>
-
-
                         {options.map((option) => (
-
-
                             <option key={option.value} value={option.value}>
-
-
                                 {option.label}
-
-
                             </option>
-
-
                         ))}
-
-
                     </select>
-
-
                 </div>
                 <div className="form-group">
                     <label>Description</label>
