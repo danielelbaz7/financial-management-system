@@ -10,12 +10,24 @@ import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
+interface Transaction {
+    id: string;
+    user_id: string;
+    category_id: string;
+    amount: number;
+    description: string;
+    date: string; // or Date if you convert
+    type: "income" | "expense";
+}
+
 
 export default function Dashboard() {
     const [income, setIncome] = useState<number>(0);
     const [expenses, setExpenses] = useState<number>(0);
 
     const [session, setSession] = useState<Session | null>(null)
+
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
@@ -38,8 +50,10 @@ export default function Dashboard() {
         let tempIncome = 0
         let tempExpense = 0
 
+        const tempTransactions = []
 
         for(const res of data) {
+            tempTransactions.push(res)
             if(res["type"] == 'income') {
                 tempIncome += res["amount"]
             } else if (res["type"] == 'expense') {
@@ -49,6 +63,7 @@ export default function Dashboard() {
 
         setIncome(tempIncome)
         setExpenses(tempExpense)
+        setTransactions(tempTransactions)
 
     }
 
@@ -130,7 +145,7 @@ export default function Dashboard() {
                     <p className="amount">${income-expenses}</p>
                 </div>
             </div>
-            <button className="text-black font-bold border-gray-400 p-3 border-2 rounded-2xl" onClick={obtainTransactions}>
+            <button className="text-black font-bold border-gray-400 p-3 border-2 rounded-2xl cursor-pointer" onClick={obtainTransactions}>
                 Update Transactions
             </button>
             <div className="header">Top Spending Categories</div>
@@ -163,6 +178,31 @@ export default function Dashboard() {
                     <Pie data={dataExpenses} options={optionsExpenses}/>
                 </div>
             </div>
+
+            <div className="mx-auto mt-16 w-128">
+                {transactions.map(transaction => (
+                    <div className="text-black ">
+                        <div className="gap-24 border-4 my-4 py-4 rounded-xl">
+                            <div>
+                            Category: {transaction.category_id}
+                            </div>
+
+                            <div>
+                                Description: {transaction.description}
+                            </div>
+
+                            <div>
+                                Amount: {transaction.amount}
+                            </div>
+
+                            <div>
+                                Type: {transaction.type}
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
         </div>
     )
 }
