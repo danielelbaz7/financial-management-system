@@ -1,5 +1,6 @@
 import "./index.css"
 import "./dashboard.css"
+import { TransactionList } from "./Transactions.tsx"
 
 import DashboardHeader from "./Dashboard-header.tsx"
 export default function Dashboard() {
@@ -46,6 +47,7 @@ export default function Dashboard() {
             <div className="spending">
                 <h2>Spending Overview</h2>
             </div>
+            <TransactionList />
         </div>
     )
 }
