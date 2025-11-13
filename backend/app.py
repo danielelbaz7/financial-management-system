@@ -11,7 +11,7 @@ app.register_blueprint(transactions_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(categories_bp)
 
-CORS(app, origins=["http://localhost:5173"])
+CORS(app, origins=["http://localhost:5173","http://localhost:5174"])
 
 @app.route('/')
 def home():

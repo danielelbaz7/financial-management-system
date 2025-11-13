@@ -1,24 +1,26 @@
 import "./index.css"
 import "./dashboard-menu.css"
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import * as React from "react";
 import type {Session} from "@supabase/supabase-js";
-import {supabase} from "./SupabaseClient.tsx";
 import { type ChangeEvent } from 'react';
+import {supabase} from "./SupabaseClient.tsx";
 
 interface BackdropProps {
     onClose: () => void;
+    session: Session;
 }
 
-export default function TransactionMenu({ onClose }: BackdropProps) {
+
+
+export default function TransactionMenu({ onClose }: BackdropProps ) {
     const [incomeOrExpense, setIncomeOrExpense] = React.useState("income");
     const [amount, setAmount] = useState<number | null>(null);
     const [error, setError] = useState("");
     const [description, setDescription] = useState("");
 
-    const [category, setCategory] = useState("Choose a Category");
+    const [category, setCategory] = useState("Rent");
     const options = [{label: "Rent", value: "rent"}, {label: "Food", value: "food"}, {label: "Transportation", value: "transportation"}, {label: "Occupation", value: "occupation"}];
-
     const [session, setSession] = useState<Session | null>(null)
 
     useEffect(() => {
@@ -26,6 +28,7 @@ export default function TransactionMenu({ onClose }: BackdropProps) {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setSession(s))
         return () => subscription.unsubscribe()
     }, [])
+
 
     const handleAddTransaction = async (e: React.FormEvent)=> {
         e.preventDefault();
