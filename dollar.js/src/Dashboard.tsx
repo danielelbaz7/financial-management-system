@@ -29,11 +29,16 @@ export default function Dashboard() {
 
     const [transactions, setTransactions] = useState<Transaction[]>([]);
 
+    const [incomeDict, setIncomeDict] = useState<Record<string, number>>({});
+    const [expenseDict, setExpenseDict] = useState<Record<string, number>>({});
+
+
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setSession(s))
         return () => subscription.unsubscribe()
     }, [])
+
 
 
     const obtainTransactions = async () => {
@@ -50,16 +55,33 @@ export default function Dashboard() {
         let tempIncome = 0
         let tempExpense = 0
 
+        let tempIncomeDict: Record<string, number> = {};
+        let tempExpenseDict: Record<string, number> = {};
+
+
         const tempTransactions = []
 
         for(const res of data) {
             tempTransactions.push(res)
             if(res["type"] == 'income') {
+                if(res["category_id"] in tempIncomeDict) {
+                    tempIncomeDict[res["category_id"]] += res["amount"]
+                } else {
+                    tempIncomeDict[res["category_id"]] = res["amount"]
+                }
                 tempIncome += res["amount"]
             } else if (res["type"] == 'expense') {
+                if(res["category_id"] in tempExpenseDict) {
+                    tempExpenseDict[res["category_id"]] += res["amount"]
+                } else {
+                    tempExpenseDict[res["category_id"]] = res["amount"]
+                }
                 tempExpense += res["amount"]
             }
         }
+
+        setIncomeDict(tempIncomeDict)
+        setExpenseDict(tempExpenseDict)
 
         setIncome(tempIncome)
         setExpenses(tempExpense)
@@ -68,10 +90,10 @@ export default function Dashboard() {
     }
 
     const dataExpenses = {
-        labels: ["Food", "Rent", "Shopping"],
+        labels: Object.keys(expenseDict),
         datasets: [
             {
-                data: [200, 800, 150],
+                data: Object.values(expenseDict),
                 backgroundColor: [
                     "#FF6384",
                     "#36A2EB",
@@ -82,10 +104,10 @@ export default function Dashboard() {
     };
 
     const dataIncome = {
-        labels: ["Occupation", "Side Hustle"],
+        labels: Object.keys(incomeDict),
         datasets: [
             {
-                data: [200, 50],
+                data: Object.values(incomeDict),
                 backgroundColor: [
                     "#79f279",
                     "#f0ac59"
