@@ -12,7 +12,7 @@ export default function HomeScreen() {
     useEffect(() => {
         localStorage.setItem("showLoginLocalStorage", JSON.stringify(showLogin));
     }, [showLogin]);
-
+    
     const closeLogin = () => {
         setShowLogin(false)
     }

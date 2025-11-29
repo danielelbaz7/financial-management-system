@@ -1,20 +1,34 @@
 import "./index.css"
 import "./dashboard-menu.css"
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import * as React from "react";
+import type {Session} from "@supabase/supabase-js";
 import { type ChangeEvent } from 'react';
+import {supabase} from "./SupabaseClient.tsx";
 
 interface BackdropProps {
     onClose: () => void;
+    session: Session;
 }
 
-export default function TransactionMenu({ onClose }: BackdropProps) {
+
+
+export default function TransactionMenu({ onClose }: BackdropProps ) {
     const [incomeOrExpense, setIncomeOrExpense] = React.useState("income");
     const [amount, setAmount] = useState<number | null>(null);
     const [error, setError] = useState("");
+    const [description, setDescription] = useState("");
 
-    const [selectedValue, setSelectedValue] = useState("Choose a Category");
-    const options = [{label: "Rent", value: "rent"}, {label: "Food", value: "food"}, {label: "Entertainment", value: "entertainment"}];
+    const [category, setCategory] = useState("Rent");
+    const options = [{label: "Rent", value: "rent"}, {label: "Food", value: "food"}, {label: "Transportation", value: "transportation"}, {label: "Occupation", value: "occupation"}];
+    const [session, setSession] = useState<Session | null>(null)
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setSession(s))
+        return () => subscription.unsubscribe()
+    }, [])
+
 
     const handleAddTransaction = async (e: React.FormEvent)=> {
         e.preventDefault()
@@ -59,7 +73,7 @@ export default function TransactionMenu({ onClose }: BackdropProps) {
                 </div>
                 <div className="form-group">
                     <label>Category</label>
-                    <select value={selectedValue} onChange={handleChange} style={{border: "1px solid black"}}>
+                    <select value={category} onChange={handleChange} style={{border: "1px solid black"}}>
                         {options.map((option) => (
                             <option key={option.value} value={option.value}>
                                 {option.label}

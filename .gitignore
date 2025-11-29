@@ -1,3 +1,5 @@
 backend/.env
 dollar.js/.env
 *.env
+backend/.venv
+*.venv
