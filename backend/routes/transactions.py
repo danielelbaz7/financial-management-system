@@ -29,15 +29,13 @@ def add_transaction():
         category_exists = False
 
         for c in categories:
-            if c["name"].lower() == data["category_id"].lower():
-                data["category_id"] = c["id"]
+            if c["name"].lower() == data["category_name"].lower():
                 category_exists = True
                 break
 
         if not category_exists:
-            new_category = {"name": data["category_id"], "user_id": user_id}
-            cat_response = supabase.table('categories').insert(new_category).execute()
-            data["category_id"] = cat_response.data[0]["id"]
+            new_category = {"name": data["category_name"], "user_id": user_id}
+            supabase.table('categories').insert(new_category).execute()
 
 
         response = supabase.table("transactions").insert(data).execute()
@@ -96,7 +94,15 @@ def remove_transaction(transaction_id):
 @transactions_bp.route('/transactions/summary', methods=['GET'])
 def sum_transactions():
     try:
-        response = supabase.table("transactions").select("*, category: category_id(name)").execute()
+        token = request.headers.get("Authorization")
+        if not token or not token.startswith("Bearer "):
+            return jsonify({"error": "Missing or invalid token"}), 401
+        
+        token = token.split(" ")[1]
+        user = supabase.auth.get_user(token)
+        user_id = user.user.id
+
+        response = supabase.table("transactions").select("*").eq("user_id", user_id).execute()
         transactions = response.data
 
         if not transactions:
@@ -104,7 +110,7 @@ def sum_transactions():
         
         summary = {}
         for t in transactions:
-            category = t.get("category", {}).get("name", "Uncategorized")
+            category = t.get("category_name", "Uncategorized")
             amount = float(t.get("amount", 0))
             summary[category] = summary.get(category, 0) + amount
         
