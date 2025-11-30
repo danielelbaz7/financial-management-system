@@ -1,8 +1,9 @@
-import "./index.css"
-import "./dashboard.css"
-import { TransactionList } from "./Transactions.tsx"
-
-import DashboardHeader from "./Dashboard-header.tsx"
+import "./index.css";
+import "./dashboard.css";
+import { TransactionList } from "./Transactions.tsx";
+import ChatbotContainer from './ChatBotContainer.tsx';
+import ChatbotWidget from './ChatBotWidget';
+import DashboardHeader from "./Dashboard-header.tsx";
 import {useEffect, useState} from "react";
 import * as React from "react";
 import type {Session} from "@supabase/supabase-js";
@@ -225,7 +226,7 @@ export default function Dashboard() {
                     </div>
                 ))}
             </div>
-
+            <ChatbotWidget />
         </div>
     )
 }
