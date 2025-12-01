@@ -31,6 +31,7 @@ export default function Dashboard() {
 
     const [incomeDict, setIncomeDict] = useState<Record<string, number>>({});
     const [expenseDict, setExpenseDict] = useState<Record<string, number>>({});
+    const [ascending, setAscending] = useState<boolean>(false);
 
 
     useEffect(() => {
@@ -39,7 +40,21 @@ export default function Dashboard() {
         return () => subscription.unsubscribe()
     }, [])
 
+    const sortReversed = () => {
+        setAscending(!ascending)
+        sortTransactions()
+        return
+    }
 
+
+    const sortTransactions = () => {
+        const sorted = [...transactions].sort((a,b) =>
+            ascending? a.amount - b.amount : b.amount - a.amount)
+
+        setTransactions(sorted)
+        return
+
+    }
 
     const obtainTransactions = async () => {
         const response = await fetch("http://localhost:5000/transactions", {
@@ -87,6 +102,8 @@ export default function Dashboard() {
         setExpenses(tempExpense)
         setTransactions(tempTransactions)
 
+        sortTransactions()
+
     }
 
     const dataExpenses = {
@@ -116,16 +133,16 @@ export default function Dashboard() {
             {
                 data: Object.values(incomeDict),
                 backgroundColor: [
-                    "#A855F7",
-                    "#6366F1",
-                    "#EC4899",
-                    "#22C55E",
-                    "#F97316",
-                    "#06B6D4",
-                    "#EAB308",
-                    "#3B82F6",
-                    "#F43F5E",
                     "#14B8A6",
+                    "#F43F5E",
+                    "#3B82F6",
+                    "#EAB308",
+                    "#06B6D4",
+                    "#F97316",
+                    "#22C55E",
+                    "#EC4899",
+                    "#6366F1",
+                    "#A855F7",
                 ],
             },
         ],
@@ -215,6 +232,10 @@ export default function Dashboard() {
                     <Pie data={dataExpenses} options={optionsExpenses}/>
                 </div>
             </div>
+
+            <button className="text-black font-bold border-gray-400 p-3 border-2 rounded-2xl cursor-pointer" onClick={sortReversed}>
+                Switch to {ascending ? "Descending" : "Ascending"}
+            </button>
 
             <div className="mx-auto mt-16 w-128">
                 {transactions.map(transaction => (

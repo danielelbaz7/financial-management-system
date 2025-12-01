@@ -10,6 +10,7 @@ def get_categories():
 
 @categories_bp.route('/categories', methods=['POST'])
 def add_category():
+    print("SJAHDJSHA")
     data = request.get_json()
     res = supabase.table('categories').insert(data).execute()
     return jsonify(res.data), 201
