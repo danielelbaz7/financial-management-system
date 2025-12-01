@@ -24,6 +24,7 @@ interface Transaction {
 export default function Dashboard() {
     const [income, setIncome] = useState<number>(0);
     const [expenses, setExpenses] = useState<number>(0);
+    const [admin, setAdmin] = useState<boolean>(false);
 
     const [session, setSession] = useState<Session | null>(null)
 
@@ -31,7 +32,7 @@ export default function Dashboard() {
 
     const [incomeDict, setIncomeDict] = useState<Record<string, number>>({});
     const [expenseDict, setExpenseDict] = useState<Record<string, number>>({});
-    const [ascending, setAscending] = useState<boolean>(false);
+    const [ascending, setAscending] = useState<boolean>(true);
 
 
     useEffect(() => {
@@ -39,6 +40,26 @@ export default function Dashboard() {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setSession(s))
         return () => subscription.unsubscribe()
     }, [])
+
+    const obtainAdmin = async () => {
+        try {
+            const { data, error } = await supabase
+                .from("users")
+                .select("admin")
+                .eq("id", session?.user?.id)
+                .single()
+            console.log(data)
+            if(error) throw error;
+            setAdmin(data.admin)
+        } catch (error) {
+            console.log(error)
+            setAdmin(false)
+            }
+    }
+
+    useEffect(() => {
+        obtainAdmin()
+    }, [session]);
 
     const sortReversed = () => {
         setAscending(!ascending)
@@ -100,9 +121,14 @@ export default function Dashboard() {
 
         setIncome(tempIncome)
         setExpenses(tempExpense)
-        setTransactions(tempTransactions)
 
-        sortTransactions()
+        const sorted = [...tempTransactions].sort((a, b) =>
+            ascending ? a.amount - b.amount : b.amount - a.amount
+        )
+
+        setTransactions(sorted)
+
+
 
     }
 
@@ -184,7 +210,7 @@ export default function Dashboard() {
 
     return(
         <div>
-            <DashboardHeader  />
+            <DashboardHeader  admin={admin}/>
             <div id="budget" className="mt-4">
                 <div className="card1 budget-card">
                     <p className="category-label">Total Budget</p>

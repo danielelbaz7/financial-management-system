@@ -6,8 +6,9 @@ import Backdrop from "./Dashboard-backdrop.tsx"
 
 import {useState} from 'react'
 import {supabase} from "./SupabaseClient.tsx";
+import * as React from "react";
 
-export default function DashboardHeader() {
+export default function DashboardHeader({admin}: {admin: any}) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
@@ -40,6 +41,9 @@ export default function DashboardHeader() {
                     <button onClick={handleSignOut}>Sign Out</button>
                     <button onClick={handleMenuToggle}>Add Expense</button>
                     <button onClick={handleCategoryToggle}>Add Category</button>
+                    <div className={admin ? `font-bold text-red-500` : `font-bold text-white`}>
+                        {admin ? "ADMIN" : "USER"}
+                    </div>
                 </div>
             </nav>
             {isMenuOpen && <TransactionMenu onClose={closeMenu} />}
