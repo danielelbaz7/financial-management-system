@@ -8,12 +8,12 @@ import {supabase} from "./SupabaseClient.tsx";
 
 interface BackdropProps {
     onClose: () => void;
-    session: Session;
+    obtainTransactions: () => void;
 }
 
 
 
-export default function TransactionMenu({ onClose }: BackdropProps ) {
+export default function TransactionMenu({ onClose, obtainTransactions }: BackdropProps ) {
     const [incomeOrExpense, setIncomeOrExpense] = React.useState("income");
     const [amount, setAmount] = useState<number | null>(null);
     const [error, setError] = useState("");
@@ -83,6 +83,8 @@ export default function TransactionMenu({ onClose }: BackdropProps ) {
                 type: incomeOrExpense,
             }),
         });
+
+        obtainTransactions()
 
 
         if(response.ok) {

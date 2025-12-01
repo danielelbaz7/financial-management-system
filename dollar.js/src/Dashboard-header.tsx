@@ -8,7 +8,7 @@ import {useState} from 'react'
 import {supabase} from "./SupabaseClient.tsx";
 import * as React from "react";
 
-export default function DashboardHeader({admin}: {admin: any}) {
+export default function DashboardHeader({admin, obtainTransactions}: {admin: boolean, obtainTransactions: any}) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
@@ -46,7 +46,7 @@ export default function DashboardHeader({admin}: {admin: any}) {
                     </div>
                 </div>
             </nav>
-            {isMenuOpen && <TransactionMenu onClose={closeMenu} />}
+            {isMenuOpen && <TransactionMenu obtainTransactions={obtainTransactions} onClose={closeMenu} />}
             {isMenuOpen && <Backdrop onClose={closeMenu} />}
             {isCategoryOpen && <CategoryMenu onClose={closeCategory} />}
             {isCategoryOpen && <Backdrop onClose={closeCategory} />}

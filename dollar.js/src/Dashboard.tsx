@@ -58,19 +58,21 @@ export default function Dashboard() {
     }
 
     useEffect(() => {
+        obtainTransactions()
         obtainAdmin()
     }, [session]);
 
     const sortReversed = () => {
-        setAscending(!ascending)
-        sortTransactions()
+        const tempAscending = !ascending
+        setAscending(tempAscending)
+        sortTransactions(tempAscending)
         return
     }
 
 
-    const sortTransactions = () => {
+    const sortTransactions = (tempAscending : boolean) => {
         const sorted = [...transactions].sort((a,b) =>
-            ascending? a.amount - b.amount : b.amount - a.amount)
+            tempAscending? a.amount - b.amount : b.amount - a.amount)
 
         setTransactions(sorted)
         return
@@ -210,7 +212,7 @@ export default function Dashboard() {
 
     return(
         <div>
-            <DashboardHeader  admin={admin}/>
+            <DashboardHeader obtainTransactions={obtainTransactions} admin={admin}/>
             <div id="budget" className="mt-4">
                 <div className="card1 budget-card">
                     <p className="category-label">Total Budget</p>
@@ -225,31 +227,28 @@ export default function Dashboard() {
                     <p className="amount">${income-expenses}</p>
                 </div>
             </div>
-            <button className="text-black font-bold border-gray-400 p-3 border-2 rounded-2xl cursor-pointer" onClick={obtainTransactions}>
-                Update Transactions
-            </button>
-            <div className="header">Top Spending Categories</div>
-            <div id="categories">
-                <div className="category-card">
-                    <div className="category-label">Rent</div>
-                    <div>$0.00</div>
-                </div>
-                <div className="category-card">
-                    <div className="category-label">Food</div>
-                    <div>$0.00</div>
-                </div>
-                <div className="category-card">
-                    <div className="category-label">Entertainment</div>
-                    <div>$0.00</div>
-                </div>
-            </div>
-            <div className="header">Top Income Categories</div>
-            <div id="categories">
-                <div className="category-card">
-                    <div className="category-label">Occupation</div>
-                    <div>$0.00</div>
-                </div>
-            </div>
+            {/*<div className="header">Top Spending Categories</div>*/}
+            {/*<div id="categories">*/}
+            {/*    <div className="category-card">*/}
+            {/*        <div className="category-label">Rent</div>*/}
+            {/*        <div>$0.00</div>*/}
+            {/*    </div>*/}
+            {/*    <div className="category-card">*/}
+            {/*        <div className="category-label">Food</div>*/}
+            {/*        <div>$0.00</div>*/}
+            {/*    </div>*/}
+            {/*    <div className="category-card">*/}
+            {/*        <div className="category-label">Entertainment</div>*/}
+            {/*        <div>$0.00</div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+            {/*<div className="header">Top Income Categories</div>*/}
+            {/*<div id="categories">*/}
+            {/*    <div className="category-card">*/}
+            {/*        <div className="category-label">Occupation</div>*/}
+            {/*        <div>$0.00</div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
             <div className="flex justify-center gap-48">
                 <div className="mt-8">
                     <Pie data={dataIncome} options={optionsIncome}/>
