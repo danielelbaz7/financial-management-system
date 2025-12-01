@@ -20,7 +20,7 @@ export default function TransactionMenu({ onClose }: BackdropProps ) {
     const [description, setDescription] = useState("");
 
     const [category, setCategory] = useState("Rent");
-    const options = [{label: "Rent", value: "rent"}, {label: "Food", value: "food"}, {label: "Transportation", value: "transportation"}, {label: "Occupation", value: "occupation"}];
+    const [options, setOptions] = useState<{ label: string; value: string }[]>([])
     const [session, setSession] = useState<Session | null>(null)
 
     useEffect(() => {
@@ -28,6 +28,32 @@ export default function TransactionMenu({ onClose }: BackdropProps ) {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setSession(s))
         return () => subscription.unsubscribe()
     }, [])
+
+    useEffect(() => {
+        const userId = session?.user?.id
+
+        const pullCategories = async () => {
+            console.log(userId);
+            const {data, error} = await supabase
+                .from("categories")
+                .select("name")
+
+            if (error) {
+                console.log("Could not get categories")
+                return
+            }
+
+            const tempOptions = (data ?? []).map((row: { name: string }) => ({
+                label: row.name,
+                value: row.name,
+            }))
+
+            setOptions(tempOptions)
+
+        }
+
+        pullCategories()
+    }, [session?.user?.id]);
 
 
     const handleAddTransaction = async (e: React.FormEvent)=> {
