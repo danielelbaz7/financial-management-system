@@ -50,7 +50,7 @@ export default function TransactionMenu({ onClose }: BackdropProps ) {
                 "Authorization": `Bearer ${session?.access_token}`,
             },
             body: JSON.stringify({
-                category_id: category,
+                category_name: category,
                 amount: amount,
                 description: description,
                 date: new Date().toISOString().split("T")[0],
