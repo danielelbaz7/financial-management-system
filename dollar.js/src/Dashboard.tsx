@@ -34,6 +34,36 @@ export default function Dashboard() {
     const [expenseDict, setExpenseDict] = useState<Record<string, number>>({});
     const [ascending, setAscending] = useState<boolean>(true);
 
+    // usestate variables for the ai feedback
+    const [analysisResponse, setAnalysisResponse] = useState<string | null>(null);
+    const [analysisLoading, setAnalysisLoading] = useState(false);
+    const [analysisError, setAnalysisError] = useState<string | null>(null);
+
+
+    // this function is used to call the AI analysis from the backend
+    const fetchAnalysis = async () => {
+        try {
+            setAnalysisLoading(true);
+            setAnalysisError(null);
+
+
+            const res = await fetch("http://localhost:5000/finance-advice", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${session?.access_token}`,
+                },
+            });
+            const data = await res.json();
+            setAnalysisResponse(data.ai.summary);
+
+        } catch (err: any) {
+            setAnalysisError(err.message ?? "Failed to fetch feedback.");
+        } finally {
+            setAnalysisLoading(false);
+        }
+    };
+
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
@@ -227,28 +257,6 @@ export default function Dashboard() {
                     <p className="amount">${income-expenses}</p>
                 </div>
             </div>
-            {/*<div className="header">Top Spending Categories</div>*/}
-            {/*<div id="categories">*/}
-            {/*    <div className="category-card">*/}
-            {/*        <div className="category-label">Rent</div>*/}
-            {/*        <div>$0.00</div>*/}
-            {/*    </div>*/}
-            {/*    <div className="category-card">*/}
-            {/*        <div className="category-label">Food</div>*/}
-            {/*        <div>$0.00</div>*/}
-            {/*    </div>*/}
-            {/*    <div className="category-card">*/}
-            {/*        <div className="category-label">Entertainment</div>*/}
-            {/*        <div>$0.00</div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
-            {/*<div className="header">Top Income Categories</div>*/}
-            {/*<div id="categories">*/}
-            {/*    <div className="category-card">*/}
-            {/*        <div className="category-label">Occupation</div>*/}
-            {/*        <div>$0.00</div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
             <div className="flex justify-center gap-48">
                 <div className="mt-8">
                     <Pie data={dataIncome} options={optionsIncome}/>
@@ -258,32 +266,75 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <button className="text-black font-bold border-gray-400 p-3 border-2 rounded-2xl cursor-pointer" onClick={sortReversed}>
-                Switch to {ascending ? "Descending" : "Ascending"}
-            </button>
 
-            <div className="mx-auto mt-16 w-128">
-                {transactions.map(transaction => (
-                    <div className="text-black ">
-                        <div className="gap-24 border-4 my-4 py-4 rounded-xl">
-                            <div>
-                                Category: {transaction.category_name}
-                            </div>
+            <div className="flex gap-8 mt-8 items-start">
+                <div className="w-1/2">
+                <div className="text-black pt-8 font-bold text-3xl">
+                    Transaction List
+                </div>
 
-                            <div>
-                                Description: {transaction.description}
-                            </div>
+                <button className="text-black font-bold border-gray-400 p-3 mt-6 border-2 rounded-2xl cursor-pointer" onClick={sortReversed}>
+                    Switch to {ascending ? "Descending" : "Ascending"}
+                </button>
+                <div className="text-black border-4 my-8 rounded-xl w-full">
+                    <div className="px-4">
+                        {transactions.map(transaction => (
+                            <div className={transaction.type == "expense" ? `text-red-800` : `text-green-800`}>
+                                <div className="gap-24 border-4 my-4 py-4 rounded-xl">
+                                    <div>
+                                        Category: {transaction.category_name}
+                                    </div>
 
-                            <div>
-                                Amount: {transaction.amount}
-                            </div>
+                                    <div>
+                                        Description: {transaction.description}
+                                    </div>
 
-                            <div>
-                                Type: {transaction.type}
+                                    <div>
+                                        Amount: {transaction.amount}
+                                    </div>
+
+                                    <div>
+                                        Type: {transaction.type}
+                                    </div>
+                                </div>
                             </div>
+                        ))}
+                    </div>
+                </div>
+                </div>
+            {/* This is the code for the AI section. This will allow the user to see AI insights about their finances with one click. */}
+                {/* This code was AI-generated with ChatGPT to save development time. Basically, this code is just a secondary column on the right of the
+                transaction list. It allows the user to fetch some AI analysis about their expenses on button click.*/}
+                <div className="sticky top-8 w-1/2">
+                    <div>
+                        <div className="text-black pt-8 font-bold text-2xl">
+                            AI Feedback
+                        </div>
+
+                        <button
+                            className="text-black font-bold border-gray-400 p-3 mt-6 border-2 rounded-2xl cursor-pointer"
+                            onClick={fetchAnalysis}
+                        >
+                            Get Feedback
+                        </button>
+
+                        <div className="mt-9 border-4 rounded-xl p-4 bg-white border-black min-h-[150px]">
+                            {analysisLoading && (
+                                <p className="text-gray-600">Loading...</p>
+                            )}
+
+                            {analysisError && (
+                                <p className="text-red-600">{analysisError}</p>
+                            )}
+
+                            {!analysisLoading && !analysisError && (
+                                <div className="whitespace-pre-wrap text-black text-sm font-semibold">
+                                {analysisResponse ?? "No data yet. Click \"Get Feedback\" to fetch AI Feedback."}
+                            </div>
+                            )}
                         </div>
                     </div>
-                ))}
+                </div>
             </div>
 
         </div>

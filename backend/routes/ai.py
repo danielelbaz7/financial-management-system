@@ -3,7 +3,7 @@ from collections import defaultdict
 import datetime as dt, json
 from config import supabase, gemini_model
 
-ai_bp = Blueprint("ai_bp", __name__, url_prefix="/ai")
+ai_bp = Blueprint("ai_bp", __name__)
 
 def get_user_id():
     return request.headers.get("X-User-Id")
@@ -62,24 +62,26 @@ def compute_metrics(transactions):
     }
 
 def build_prompt(metrics, period):
-    return (
-f"""You are a cautious financial coach. Use ONLY these facts to give brief, specific tips.
-No investment, credit churning, or tax/legal advice.
+    return f"""You are a cautious financial coach. You provide your advice in PLAIN ENGLISH
 
-FACTS ({period["start"]} to {period["end"]}):
+Use ONLY the facts below to give BRIEF and SPECIFIC tips.
+No investment advice, no credit card churning, and no tax/legal advice.
+
+FACTS for the period {period["start"]} to {period["end"]}:
 - Income: ${metrics["income"]}
 - Expenses: ${metrics["expenses"]}
 - Savings: ${metrics["savings"]}
 - Savings rate: {metrics["savings_rate"]*100:.1f}%
-- Top categories: {metrics["top_categories"]}
+- Top expense categories: {metrics["top_categories"]}
 
-Return JSON only:
-{{
-  "summary": "1–3 sentences.",
-  "tips": [{{"title":"...", "detail":"..."}}, ...],
-  "caveats": ["Educational guidance only; not financial advice."]
-}}"""
-    )
+Write 1–3 sentences that:
+- Summarize how this person's finances look for this period.
+- Give 1–2 concrete, practical suggestions to improve their situation.
+
+Return PLAIN TEXT only.
+Do NOT return JSON.
+Do NOT wrap your answer in ``` or any other formatting.
+Do NOT include headings or bullet points."""
 
 def call_gemini(prompt_text):
     if not gemini_model:
@@ -91,9 +93,12 @@ def call_gemini(prompt_text):
     except Exception:
         return {"summary": txt[:400], "tips": [], "caveats": ["Educational guidance only; not financial advice."]}
 
-@ai_bp.route("/finance-advice", methods=["POST"])
+@ai_bp.route("/finance-advice", methods=["GET"])
 def finance_advice():
-    uid = get_user_id()
+    print("HI")
+    token = request.headers.get("Authorization")
+    token = token.split(" ")[1]
+    uid = supabase.auth.get_user(token).user.id
     if not uid:
         return jsonify({"error": "Unauthorized"}), 401
 
