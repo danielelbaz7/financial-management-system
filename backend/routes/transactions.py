@@ -10,8 +10,13 @@ def get_transactions():
     token=token.split(" ")[1]
     user_id = supabase.auth.get_user(token).user.id
 
-    response = supabase.table("transactions").select("*").eq("user_id", user_id).execute()
-    print(response.data)
+    admin_DB = supabase.table("users").select("admin").eq("id", user_id).execute()
+    isAdmin = admin_DB.data[0]['admin']
+
+    if(isAdmin):
+        response = supabase.table("transactions").select("*").execute()
+    else:
+        response = supabase.table("transactions").select("*").eq("user_id", user_id).execute()
     return jsonify(response.data), 200
 
 @transactions_bp.route('/transactions', methods=['POST'])

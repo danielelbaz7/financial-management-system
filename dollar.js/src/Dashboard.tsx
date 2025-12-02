@@ -26,6 +26,7 @@ interface Transaction {
 export default function Dashboard() {
     const [income, setIncome] = useState<number>(0);
     const [expenses, setExpenses] = useState<number>(0);
+    const [admin, setAdmin] = useState<boolean>(false);
 
     const [session, setSession] = useState<Session | null>(null)
 
@@ -33,6 +34,7 @@ export default function Dashboard() {
 
     const [incomeDict, setIncomeDict] = useState<Record<string, number>>({});
     const [expenseDict, setExpenseDict] = useState<Record<string, number>>({});
+    const [ascending, setAscending] = useState<boolean>(true);
 
 
     useEffect(() => {
@@ -41,7 +43,43 @@ export default function Dashboard() {
         return () => subscription.unsubscribe()
     }, [])
 
+    const obtainAdmin = async () => {
+        try {
+            const { data, error } = await supabase
+                .from("users")
+                .select("admin")
+                .eq("id", session?.user?.id)
+                .single()
+            console.log(data)
+            if(error) throw error;
+            setAdmin(data.admin)
+        } catch (error) {
+            console.log(error)
+            setAdmin(false)
+            }
+    }
 
+    useEffect(() => {
+        obtainTransactions()
+        obtainAdmin()
+    }, [session]);
+
+    const sortReversed = () => {
+        const tempAscending = !ascending
+        setAscending(tempAscending)
+        sortTransactions(tempAscending)
+        return
+    }
+
+
+    const sortTransactions = (tempAscending : boolean) => {
+        const sorted = [...transactions].sort((a,b) =>
+            tempAscending? a.amount - b.amount : b.amount - a.amount)
+
+        setTransactions(sorted)
+        return
+
+    }
 
     const obtainTransactions = async () => {
         const response = await fetch("http://localhost:5000/transactions", {
@@ -87,7 +125,14 @@ export default function Dashboard() {
 
         setIncome(tempIncome)
         setExpenses(tempExpense)
-        setTransactions(tempTransactions)
+
+        const sorted = [...tempTransactions].sort((a, b) =>
+            ascending ? a.amount - b.amount : b.amount - a.amount
+        )
+
+        setTransactions(sorted)
+
+
 
     }
 
@@ -118,16 +163,16 @@ export default function Dashboard() {
             {
                 data: Object.values(incomeDict),
                 backgroundColor: [
-                    "#A855F7",
-                    "#6366F1",
-                    "#EC4899",
-                    "#22C55E",
-                    "#F97316",
-                    "#06B6D4",
-                    "#EAB308",
-                    "#3B82F6",
-                    "#F43F5E",
                     "#14B8A6",
+                    "#F43F5E",
+                    "#3B82F6",
+                    "#EAB308",
+                    "#06B6D4",
+                    "#F97316",
+                    "#22C55E",
+                    "#EC4899",
+                    "#6366F1",
+                    "#A855F7",
                 ],
             },
         ],
@@ -169,7 +214,7 @@ export default function Dashboard() {
 
     return(
         <div>
-            <DashboardHeader  />
+            <DashboardHeader obtainTransactions={obtainTransactions} admin={admin}/>
             <div id="budget" className="mt-4">
                 <div className="card1 budget-card">
                     <p className="category-label">Total Budget</p>
@@ -184,31 +229,28 @@ export default function Dashboard() {
                     <p className="amount">${income-expenses}</p>
                 </div>
             </div>
-            <button className="text-black font-bold border-gray-400 p-3 border-2 rounded-2xl cursor-pointer" onClick={obtainTransactions}>
-                Update Transactions
-            </button>
-            <div className="header">Top Spending Categories</div>
-            <div id="categories">
-                <div className="category-card">
-                    <div className="category-label">Rent</div>
-                    <div>$0.00</div>
-                </div>
-                <div className="category-card">
-                    <div className="category-label">Food</div>
-                    <div>$0.00</div>
-                </div>
-                <div className="category-card">
-                    <div className="category-label">Entertainment</div>
-                    <div>$0.00</div>
-                </div>
-            </div>
-            <div className="header">Top Income Categories</div>
-            <div id="categories">
-                <div className="category-card">
-                    <div className="category-label">Occupation</div>
-                    <div>$0.00</div>
-                </div>
-            </div>
+            {/*<div className="header">Top Spending Categories</div>*/}
+            {/*<div id="categories">*/}
+            {/*    <div className="category-card">*/}
+            {/*        <div className="category-label">Rent</div>*/}
+            {/*        <div>$0.00</div>*/}
+            {/*    </div>*/}
+            {/*    <div className="category-card">*/}
+            {/*        <div className="category-label">Food</div>*/}
+            {/*        <div>$0.00</div>*/}
+            {/*    </div>*/}
+            {/*    <div className="category-card">*/}
+            {/*        <div className="category-label">Entertainment</div>*/}
+            {/*        <div>$0.00</div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+            {/*<div className="header">Top Income Categories</div>*/}
+            {/*<div id="categories">*/}
+            {/*    <div className="category-card">*/}
+            {/*        <div className="category-label">Occupation</div>*/}
+            {/*        <div>$0.00</div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
             <div className="flex justify-center gap-48">
                 <div className="mt-8">
                     <Pie data={dataIncome} options={optionsIncome}/>
@@ -217,6 +259,10 @@ export default function Dashboard() {
                     <Pie data={dataExpenses} options={optionsExpenses}/>
                 </div>
             </div>
+
+            <button className="text-black font-bold border-gray-400 p-3 border-2 rounded-2xl cursor-pointer" onClick={sortReversed}>
+                Switch to {ascending ? "Descending" : "Ascending"}
+            </button>
 
             <div className="mx-auto mt-16 w-128">
                 {transactions.map(transaction => (
