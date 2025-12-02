@@ -5,22 +5,26 @@ from config import supabase, gemini_model
 
 ai_bp = Blueprint("ai_bp", __name__)
 
-def get_user_id():
-    return request.headers.get("X-User-Id")
+#the code in this file was mainly generated with ai.
+#we used gemini to build it initially and chatgpt for some bug fixes
+#a lot of the code was also independently modified to ensure expected results
 
+#this obtains the date range of the transactions to ensure relevant transactions
 def date_range():
     q = request.args
     end = dt.date.fromisoformat(q.get("end")) if q.get("end") else dt.date.today()
     start = dt.date.fromisoformat(q.get("start")) if q.get("start") else (end - dt.timedelta(days=30))
-    return start, end
+    # end_exclusive: we’ll use < instead of <=
+    return start, end + dt.timedelta(days=1)
 
+#this obtains the user's transactions from the database and places them into a list
+# of transactions for the ai to process
 def get_transactions(user_id, start, end):
     resp = (supabase.table("transactions")
         .select("id,date,amount,description,type,category:categories(name)")
         .eq("user_id", user_id)
         .gte("date", start.isoformat())
         .lte("date", end.isoformat())
-        .order("date", desc=False)
         .execute())
     rows = resp.data or []
     transactions = []
@@ -38,6 +42,8 @@ def get_transactions(user_id, start, end):
         })
     return transactions
 
+#this computes metrics like savings amount, rate, income, and expenses, and returns these for the ai
+#to process when giving advice
 def compute_metrics(transactions):
     income   = sum(t["amount"] for t in transactions if t["amount"] > 0)
     expenses = sum(-t["amount"] for t in transactions if t["amount"] < 0)
@@ -61,6 +67,8 @@ def compute_metrics(transactions):
         "top_categories": top
     }
 
+#this is simply the prompt for the AI. it tells the AI how to return the data and also provides the necessary
+#information the ai needs to give its feedback and analysis
 def build_prompt(metrics, period):
     return f"""You are a cautious financial coach. You provide your advice in PLAIN ENGLISH
 
@@ -83,6 +91,7 @@ Do NOT return JSON.
 Do NOT wrap your answer in ``` or any other formatting.
 Do NOT include headings or bullet points."""
 
+#this actually makes the ai api call to obtain the response
 def call_gemini(prompt_text):
     if not gemini_model:
         return {"summary": "Gemini not configured.", "tips": [], "caveats": ["Set GEMINI_API_KEY."]}
@@ -93,9 +102,10 @@ def call_gemini(prompt_text):
     except Exception:
         return {"summary": txt[:400], "tips": [], "caveats": ["Educational guidance only; not financial advice."]}
 
+#this is the route. it gets the user's id from the request, calls the api, and puts everything together
+#to be returned to the frontend
 @ai_bp.route("/finance-advice", methods=["GET"])
 def finance_advice():
-    print("HI")
     token = request.headers.get("Authorization")
     token = token.split(" ")[1]
     uid = supabase.auth.get_user(token).user.id

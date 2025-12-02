@@ -22,7 +22,7 @@ export default function Body() {
                     </div>
                     <div className="text-black text-xl pt-4 px-4">
                         Categorize your spending in any way you want! You can use our premade categories
-                        like tuition and rent, or create your own!
+                        like food and rent, or create your own!
                     </div>
                 </div>
 

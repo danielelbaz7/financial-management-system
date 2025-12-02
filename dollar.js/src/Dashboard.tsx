@@ -318,7 +318,7 @@ export default function Dashboard() {
                             Get Feedback
                         </button>
 
-                        <div className="mt-9 border-4 rounded-xl p-4 bg-white border-black min-h-[150px]">
+                        <div className="mt-8.75 border-4 rounded-xl p-4 bg-white border-black">
                             {analysisLoading && (
                                 <p className="text-gray-600">Loading...</p>
                             )}
