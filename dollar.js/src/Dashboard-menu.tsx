@@ -20,7 +20,7 @@ export default function TransactionMenu({ onClose }: BackdropProps ) {
     const [description, setDescription] = useState("");
 
     const [category, setCategory] = useState("Rent");
-    const options = [{label: "Rent", value: "rent"}, {label: "Food", value: "food"}, {label: "Transportation", value: "transportation"}, {label: "Occupation", value: "occupation"}];
+    const [options, setOptions] = useState<{ label: string; value: string }[]>([])
     const [session, setSession] = useState<Session | null>(null)
 
     useEffect(() => {
@@ -29,12 +29,68 @@ export default function TransactionMenu({ onClose }: BackdropProps ) {
         return () => subscription.unsubscribe()
     }, [])
 
+    useEffect(() => {
+        const userId = session?.user?.id
+
+        const pullCategories = async () => {
+            console.log(userId);
+            const {data, error} = await supabase
+                .from("categories")
+                .select("name")
+
+            if (error) {
+                console.log("Could not get categories")
+                return
+            }
+
+            const tempOptions = (data ?? []).map((row: { name: string }) => ({
+                label: row.name,
+                value: row.name,
+            }))
+
+            setOptions(tempOptions)
+
+        }
+
+        pullCategories()
+    }, [session?.user?.id]);
+
 
     const handleAddTransaction = async (e: React.FormEvent)=> {
         e.preventDefault()
 
-        if(amount === null) {
-            setError("Please enter amount")
+        if (amount === null) {
+            setError("Please enter amount.");
+            return;
+        }
+
+        if(session?.access_token === null) {
+            setError("No access token.");
+            return;
+        }
+
+        const response = await fetch("http://localhost:5000/transactions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${session?.access_token}`,
+            },
+            body: JSON.stringify({
+                category_name: category,
+                amount: amount,
+                description: description,
+                date: new Date().toISOString().split("T")[0],
+                type: incomeOrExpense,
+            }),
+        });
+
+
+        if(response.ok) {
+            alert("Transaction added successfully.");
+            onClose();
+            return
+        } else {
+            alert("Error when adding transaction.");
             return
         }
     }

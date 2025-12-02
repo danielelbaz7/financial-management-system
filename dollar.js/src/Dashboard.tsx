@@ -15,7 +15,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, Title);
 interface Transaction {
     id: string;
     user_id: string;
-    category_id: string;
+    category_name: string;
     amount: number;
     description: string;
     date: string; // or Date if you convert
@@ -66,17 +66,17 @@ export default function Dashboard() {
         for(const res of data) {
             tempTransactions.push(res)
             if(res["type"] == 'income') {
-                if(res["category_id"] in tempIncomeDict) {
-                    tempIncomeDict[res["category_id"]] += res["amount"]
+                if(res["category_name"] in tempIncomeDict) {
+                    tempIncomeDict[res["category_name"]] += res["amount"]
                 } else {
-                    tempIncomeDict[res["category_id"]] = res["amount"]
+                    tempIncomeDict[res["category_name"]] = res["amount"]
                 }
                 tempIncome += res["amount"]
             } else if (res["type"] == 'expense') {
-                if(res["category_id"] in tempExpenseDict) {
-                    tempExpenseDict[res["category_id"]] += res["amount"]
+                if(res["category_name"] in tempExpenseDict) {
+                    tempExpenseDict[res["category_name"]] += res["amount"]
                 } else {
-                    tempExpenseDict[res["category_id"]] = res["amount"]
+                    tempExpenseDict[res["category_name"]] = res["amount"]
                 }
                 tempExpense += res["amount"]
             }
@@ -97,9 +97,16 @@ export default function Dashboard() {
             {
                 data: Object.values(expenseDict),
                 backgroundColor: [
-                    "#FF6384",
-                    "#36A2EB",
-                    "#FFCE56",
+                    "#A855F7",
+                    "#6366F1",
+                    "#EC4899",
+                    "#22C55E",
+                    "#F97316",
+                    "#06B6D4",
+                    "#EAB308",
+                    "#3B82F6",
+                    "#F43F5E",
+                    "#14B8A6",
                 ],
             },
         ],
@@ -111,8 +118,16 @@ export default function Dashboard() {
             {
                 data: Object.values(incomeDict),
                 backgroundColor: [
-                    "#79f279",
-                    "#f0ac59"
+                    "#A855F7",
+                    "#6366F1",
+                    "#EC4899",
+                    "#22C55E",
+                    "#F97316",
+                    "#06B6D4",
+                    "#EAB308",
+                    "#3B82F6",
+                    "#F43F5E",
+                    "#14B8A6",
                 ],
             },
         ],
@@ -208,7 +223,7 @@ export default function Dashboard() {
                     <div className="text-black ">
                         <div className="gap-24 border-4 my-4 py-4 rounded-xl">
                             <div>
-                            Category: {transaction.category_id}
+                                Category: {transaction.category_name}
                             </div>
 
                             <div>
