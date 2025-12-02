@@ -38,9 +38,9 @@ export default function DashboardHeader({admin, obtainTransactions}: {admin: boo
             <nav className="top-bar">
                 <div className="logo-transaction">
                     <div>Dollar.js</div>
-                    <button onClick={handleSignOut}>Sign Out</button>
-                    <button onClick={handleMenuToggle}>Add Expense</button>
-                    <button onClick={handleCategoryToggle}>Add Category</button>
+                    <button className="cursor-pointer" onClick={handleSignOut}>Sign Out</button>
+                    <button className="cursor-pointer" onClick={handleMenuToggle}>Add Transaction</button>
+                    <button className="cursor-pointer" onClick={handleCategoryToggle}>Add Category</button>
                     <div className={admin ? `font-bold text-red-500` : `font-bold text-white`}>
                         {admin ? "ADMIN" : "USER"}
                     </div>
