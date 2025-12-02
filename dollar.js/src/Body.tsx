@@ -1,16 +1,25 @@
+import { CircleDollarSign } from "lucide-react"
 //simple styling for the landing page, with ids labeling each section to allow nav buttons to go to the correct sections
 export default function Body() {
     return(
         <div>
-            <div id="home" className="scroll-mt-24 text-black pt-40 text-6xl text-left font-bold max-w-lg">
-                For Students, By Students
-            </div>
-            <div className="text-black pt-6 text-2xl text-left font-semibold max-w-md">
-                Dollar.js is a student-oriented, intuitive, and feature-packed budgeting application.
+            <div className="relative max-w-5xl">
+                <div id="home" className="scroll-mt-24 text-black pt-40 text-6xl text-left font-bold max-w-lg">
+                    For Students, By Students
+                </div>
                 <div className="text-black pt-6 text-2xl text-left font-semibold max-w-md">
-                    We were tired of other budgeting apps that didn't offer what we needed - so we built our own.
+                    Dollar.js is a student-oriented, intuitive, and feature-packed budgeting application.
+                    <div className="text-black pt-6 text-2xl text-left font-semibold max-w-md">
+                        We were tired of other budgeting apps that didn't offer what we needed - so we built our own.
+                    </div>
                 </div>
             </div>
+
+            <CircleDollarSign
+                aria-label="Dollar.js Logo"
+                className="hidden md:block absolute right-32 top-42 w-96 h-96 text-black"
+            />
+
 
             <div id="features" className="scroll-mt-24 text-black pt-18 text-6xl text-center font-bold">
                 Features
