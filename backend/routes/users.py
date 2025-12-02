@@ -3,6 +3,8 @@ from config import supabase
 
 users_bp = Blueprint('users', __name__)
 
+#places a newly registered used in the users database so we can actually give them transactions
+#and categories
 @users_bp.route('/register', methods=['POST'])
 def register_user():
     # data = request.get_json()
@@ -13,10 +15,12 @@ def register_user():
     token=token.split(" ")[1]
     user = supabase.auth.get_user(token).user
 
+    #checks if user already exists
     current_table = supabase.table("users").select("id").eq("id", user.id).execute()
     if current_table.data:
         return jsonify({"message": "User already exists"}), 200
 
+    #creates data to insert for user
     data = {
         "id": user.id,
         "name": user.user_metadata.get("display_name") or user.user_metadata.get("name"),
@@ -28,6 +32,7 @@ def register_user():
     if not data["name"]:
         return jsonify({"error": "Missing name"}), 400
 
+    #tries to insert and provides error if not
     try:
         response = supabase.table("users").insert(data).execute()
         if response.data:
@@ -36,6 +41,8 @@ def register_user():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+#logs in the user. already done in frontend, but this is here
+# incase we decide to update the application with backend auth
 @users_bp.route('/login', methods=['POST'])
 def login_user():
     data = request.get_json()
@@ -57,7 +64,8 @@ def login_user():
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-    
+
+#used for obtaining user data. returns basic user info
 @users_bp.route('/profile', methods=['GET'])
 def get_profile():
     token = request.headers.get("Authorization")

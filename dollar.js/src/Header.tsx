@@ -4,6 +4,7 @@ type Props = {
     onLoginClick: () => void
 }
 
+//header for landing page, allows navigation to all components on landing page
 export default function Header({ onLoginClick }: Props) {
     return(
             <header className="fixed top-0 left-0 w-full bg-white flex items-center justify-between px-12

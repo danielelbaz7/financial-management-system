@@ -22,6 +22,7 @@ interface Transaction {
 
 
 export default function Dashboard() {
+    // this stores user properties like session and income and expense data
     const [income, setIncome] = useState<number>(0);
     const [expenses, setExpenses] = useState<number>(0);
     const [admin, setAdmin] = useState<boolean>(false);
@@ -54,6 +55,7 @@ export default function Dashboard() {
                     "Authorization": `Bearer ${session?.access_token}`,
                 },
             });
+            //parses data and places it into state to be displayed
             const data = await res.json();
             setAnalysisResponse(data.ai.summary);
 
@@ -65,12 +67,14 @@ export default function Dashboard() {
     };
 
 
+    //yields session on application open
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setSession(s))
         return () => subscription.unsubscribe()
     }, [])
 
+    //yields whether or not the user is an admin from the database
     const obtainAdmin = async () => {
         try {
             const { data, error } = await supabase
@@ -87,11 +91,13 @@ export default function Dashboard() {
             }
     }
 
+    //obtains all transactions and admin status upon session changing (user signs in, etc)
     useEffect(() => {
         obtainTransactions()
         obtainAdmin()
     }, [session]);
 
+    //sorts the transactions in the reverse order they're currently in
     const sortReversed = () => {
         const tempAscending = !ascending
         setAscending(tempAscending)
@@ -100,6 +106,7 @@ export default function Dashboard() {
     }
 
 
+    //sorts transactions either ascendingly or descendingly, depending on what is requested
     const sortTransactions = (tempAscending : boolean) => {
         const sorted = [...transactions].sort((a,b) =>
             tempAscending? a.amount - b.amount : b.amount - a.amount)
@@ -109,6 +116,7 @@ export default function Dashboard() {
 
     }
 
+    //gets all transaction data from database and places it inside of state variables
     const obtainTransactions = async () => {
         const response = await fetch("http://localhost:5000/transactions", {
             method: "GET",
@@ -129,6 +137,7 @@ export default function Dashboard() {
 
         const tempTransactions = []
 
+        //places everything in temporary arrays and dicts to be placed in state
         for(const res of data) {
             tempTransactions.push(res)
             if(res["type"] == 'income') {
@@ -148,12 +157,14 @@ export default function Dashboard() {
             }
         }
 
+        //places everything in state
         setIncomeDict(tempIncomeDict)
         setExpenseDict(tempExpenseDict)
 
         setIncome(tempIncome)
         setExpenses(tempExpense)
 
+        //pre sorts everything to ensure live state throughout the application
         const sorted = [...tempTransactions].sort((a, b) =>
             ascending ? a.amount - b.amount : b.amount - a.amount
         )
@@ -164,6 +175,7 @@ export default function Dashboard() {
 
     }
 
+    //creates the data for the charts
     const dataExpenses = {
         labels: Object.keys(expenseDict),
         datasets: [
@@ -207,6 +219,7 @@ export default function Dashboard() {
     };
 
 
+    //creates titles for charts
     const optionsExpenses = {
         plugins: {
             title: {
@@ -240,6 +253,7 @@ export default function Dashboard() {
     };
 
 
+    //pieces all parts of the dashboard together including the header, list, and ai feedback
     return(
         <div>
             <DashboardHeader obtainTransactions={obtainTransactions} admin={admin}/>

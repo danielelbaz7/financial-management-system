@@ -2,6 +2,7 @@ type Props = {
     onClick: () => void
 }
 
+//brings user to sign in/sign up page (that is what is stored in onclick)
 export default function GetStartedButton({ onClick }: Props) {
     return (
         <div>

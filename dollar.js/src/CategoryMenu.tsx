@@ -13,25 +13,27 @@ export default function CategoryMenu({ onClose }: BackdropProps) {
     const [category, setCategory] = useState(null);
     const [session, setSession] = useState<Session | null>(null)
 
+    //yields session to ensure categories get added correctly to the correct user
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setSession(s))
         return () => subscription.unsubscribe()
     }, [])
 
+    //adds a new category to the database under a user id
     const handleAddCategory = async (e: React.FormEvent)=> {
         e.preventDefault();
 
+        //checks to ensure a valid user is adding the category and a category has been entered
         if (category === null) {
-            setError("Please enter category.");
             return;
         }
 
         if(session?.access_token === null) {
-            setError("No access token.");
             return;
         }
 
+        //api call which adds category on backend
         const response = await fetch("http://localhost:5000/categories", {
             method: "POST",
             headers: {
@@ -55,6 +57,7 @@ export default function CategoryMenu({ onClose }: BackdropProps) {
         }
     }
 
+    //takes in category input with usestate
     return (
         <div className="c-menu">
             <div className="category-menu-header">

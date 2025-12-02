@@ -1,3 +1,4 @@
+//simple styling for the landing page, with ids labeling each section to allow nav buttons to go to the correct sections
 export default function Body() {
     return(
         <div>

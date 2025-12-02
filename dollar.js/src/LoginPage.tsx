@@ -14,9 +14,12 @@ export default function LoginPage({onButtonPress}: Props) {
     const [name, setName] = useState("");
     const [error, setError] = useState("");
 
+    //this function allows users to sign in
     const handleSignIn = async (e: React.FormEvent) => {
+        //prevents default behavior to ensure correct behavior
         e.preventDefault()
 
+        //verifies passwords for signup
         try {
             if(!loginOrSignUp) {
                 if(password != confirmPassword) {
@@ -24,6 +27,7 @@ export default function LoginPage({onButtonPress}: Props) {
                     return;
                 }
 
+                //if good, we sign up
                 const { error } = await supabase.auth.signUp({
                     email,
                     password,
@@ -36,10 +40,12 @@ export default function LoginPage({onButtonPress}: Props) {
 
                 if (error) throw error
 
+                //all set error stuff is used to display the error data to the user
                 setError(
                     "Check your email for the confirmation link! If your email is already registered, you will not receive an email!",
                 )
             } else {
+                //if siging in, try signing in with the info
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email,
                     password,
@@ -48,6 +54,7 @@ export default function LoginPage({onButtonPress}: Props) {
                 if (error) throw error
 
                 const session = data.session;
+                //resets whether or not to show login or not, and calls register to add the user to a users table
                 if (session) {
                     localStorage.setItem("showLoginLocalStorage", JSON.stringify(false))
                     await fetch("http://localhost:5000/register", {
@@ -67,6 +74,7 @@ export default function LoginPage({onButtonPress}: Props) {
         }
     }
 
+    //simple ui with buttons and login/signup switching
     return (
         <div>
             <button

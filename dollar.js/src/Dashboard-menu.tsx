@@ -14,6 +14,7 @@ interface BackdropProps {
 
 
 export default function TransactionMenu({ onClose, obtainTransactions }: BackdropProps ) {
+    //state to store all the necessary data for the new transaction that will be entered
     const [incomeOrExpense, setIncomeOrExpense] = React.useState("income");
     const [amount, setAmount] = useState<number | null>(null);
     const [error, setError] = useState("");
@@ -23,6 +24,7 @@ export default function TransactionMenu({ onClose, obtainTransactions }: Backdro
     const [options, setOptions] = useState<{ label: string; value: string }[]>([])
     const [session, setSession] = useState<Session | null>(null)
 
+    //obtains session to ensure there is a valid user signed in and to take the user's id when adding to db
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setSession(s))
@@ -31,9 +33,9 @@ export default function TransactionMenu({ onClose, obtainTransactions }: Backdro
 
     useEffect(() => {
         const userId = session?.user?.id
-
+        //this pulls categories with useeffect, and this useeffect is set to render every time the user id changes,
+        //so it rerenders when a user signs in. this ensures all categories are always available
         const pullCategories = async () => {
-            console.log(userId);
             const {data, error} = await supabase
                 .from("categories")
                 .select("name")
@@ -56,6 +58,7 @@ export default function TransactionMenu({ onClose, obtainTransactions }: Backdro
     }, [session?.user?.id]);
 
 
+    //calls the api to add a new transaction
     const handleAddTransaction = async (e: React.FormEvent)=> {
         e.preventDefault();
 
@@ -73,6 +76,7 @@ export default function TransactionMenu({ onClose, obtainTransactions }: Backdro
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                //bearer token provides the user id as a secure token to be processed by the backend
                 "Authorization": `Bearer ${session?.access_token}`,
             },
             body: JSON.stringify({
@@ -84,6 +88,7 @@ export default function TransactionMenu({ onClose, obtainTransactions }: Backdro
             }),
         });
 
+        //refreshes upon adding a new transaction
         obtainTransactions()
 
 
@@ -97,10 +102,12 @@ export default function TransactionMenu({ onClose, obtainTransactions }: Backdro
         }
     }
 
+    //simple state change for category
     const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
         setCategory(event.target.value);
     }
 
+    //builds the ui and links everything together
     return (
         <div className="transaction-menu" style={{
             height: error ? "475px" : "435px",

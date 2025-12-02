@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import LoginManager from "./LoginManager.tsx";
 
 export default function HomeScreen() {
+    //pulls from LS whether to show login page or simply show landing page
     const [showLogin, setShowLogin] = useState(() => {
         const stored = localStorage.getItem("showLoginLocalStorage")
         return stored ? JSON.parse(stored) : false

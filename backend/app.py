@@ -14,6 +14,7 @@ app.register_blueprint(categories_bp)
 app.register_blueprint(ai_bp)
 
 
+#allows api calls from frontend
 CORS(app, origins=["http://localhost:5173","http://localhost:5174"])
 
 @app.route('/')
