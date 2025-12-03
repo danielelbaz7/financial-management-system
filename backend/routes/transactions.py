@@ -50,7 +50,6 @@ def add_transaction():
         #actually insert the transaction
         response = supabase.table("transactions").insert(data).execute()
     except Exception as e:
-        print("ERROR:", e)
         traceback.print_exc()
         return jsonify({"status": "bad", "message": str(e)}), 400
 

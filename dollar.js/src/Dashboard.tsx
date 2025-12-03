@@ -82,11 +82,9 @@ export default function Dashboard() {
                 .select("admin")
                 .eq("id", session?.user?.id)
                 .single()
-            console.log(data)
             if(error) throw error;
             setAdmin(data.admin)
         } catch (error) {
-            console.log(error)
             setAdmin(false)
             }
     }
